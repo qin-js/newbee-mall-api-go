@@ -1,18 +1,19 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+	"strconv"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/response"
 	mallReq "main.go/model/mall/request"
-	"strconv"
 )
 
 type MallUserAddressApi struct {
 }
 
-func (m *MallUserAddressApi) AddressList(c *gin.Context) {
+func (m *MallUserAddressApi) AddressList(c *gee.Context) {
 	token := c.GetHeader("token")
 	if err, userAddressList := mallUserAddressService.GetMyAddress(token); err != nil {
 		global.GVA_LOG.Error("获取地址失败", zap.Error(err))
@@ -24,9 +25,9 @@ func (m *MallUserAddressApi) AddressList(c *gin.Context) {
 	}
 }
 
-func (m *MallUserAddressApi) SaveUserAddress(c *gin.Context) {
+func (m *MallUserAddressApi) SaveUserAddress(c *gee.Context) {
 	var req mallReq.AddAddressParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	token := c.GetHeader("token")
 	err := mallUserAddressService.SaveUserAddress(token, req)
 	if err != nil {
@@ -37,9 +38,9 @@ func (m *MallUserAddressApi) SaveUserAddress(c *gin.Context) {
 
 }
 
-func (m *MallUserAddressApi) UpdateMallUserAddress(c *gin.Context) {
+func (m *MallUserAddressApi) UpdateMallUserAddress(c *gee.Context) {
 	var req mallReq.UpdateAddressParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	token := c.GetHeader("token")
 	err := mallUserAddressService.UpdateUserAddress(token, req)
 	if err != nil {
@@ -49,7 +50,7 @@ func (m *MallUserAddressApi) UpdateMallUserAddress(c *gin.Context) {
 	response.OkWithMessage("更新用户地址成功", c)
 }
 
-func (m *MallUserAddressApi) GetMallUserAddress(c *gin.Context) {
+func (m *MallUserAddressApi) GetMallUserAddress(c *gee.Context) {
 	id, _ := strconv.Atoi(c.Param("addressId"))
 	token := c.GetHeader("token")
 	if err, userAddress := mallUserAddressService.GetMallUserAddressById(token, id); err != nil {
@@ -60,7 +61,7 @@ func (m *MallUserAddressApi) GetMallUserAddress(c *gin.Context) {
 	}
 }
 
-func (m *MallUserAddressApi) GetMallUserDefaultAddress(c *gin.Context) {
+func (m *MallUserAddressApi) GetMallUserDefaultAddress(c *gee.Context) {
 	token := c.GetHeader("token")
 	if err, userAddress := mallUserAddressService.GetMallUserDefaultAddress(token); err != nil {
 		global.GVA_LOG.Error("获取地址失败", zap.Error(err))
@@ -70,7 +71,7 @@ func (m *MallUserAddressApi) GetMallUserDefaultAddress(c *gin.Context) {
 	}
 }
 
-func (m *MallUserAddressApi) DeleteUserAddress(c *gin.Context) {
+func (m *MallUserAddressApi) DeleteUserAddress(c *gee.Context) {
 	id, _ := strconv.Atoi(c.Param("addressId"))
 	token := c.GetHeader("token")
 	err := mallUserAddressService.DeleteUserAddress(token, id)

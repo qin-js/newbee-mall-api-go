@@ -1,15 +1,16 @@
 package initialize
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+	"net/http"
+
 	"main.go/global"
 	"main.go/middleware"
 	"main.go/router"
-	"net/http"
 )
 
-func Routers() *gin.Engine {
-	var Router = gin.Default()
+func Routers() *gee.Engine {
+	var Router = gee.Default()
 	Router.StaticFS(global.GVA_CONFIG.Local.Path, http.Dir(global.GVA_CONFIG.Local.Path)) // 为用户头像和文件提供静态地址
 	//Router.Use(middleware.LoadTls())  // 打开就能玩https了
 	global.GVA_LOG.Info("use middleware logger")
@@ -19,12 +20,12 @@ func Routers() *gin.Engine {
 	// 方便统一添加路由组前缀 多服务器上线使用
 	//商城后管路由
 	manageRouter := router.RouterGroupApp.Manage
-	ManageGroup := Router.Group("manage-api")
-	PublicGroup := Router.Group("")
+	ManageGroup := Router.Group("/manage-api")
+	PublicGroup := Router.Group("/")
 
 	{
 		// 健康监测
-		PublicGroup.GET("/health", func(c *gin.Context) {
+		PublicGroup.GET("health", func(c *gee.Context) {
 			c.JSON(200, "ok")
 		})
 	}
@@ -39,9 +40,12 @@ func Routers() *gin.Engine {
 	}
 	//商城前端路由
 	mallRouter := router.RouterGroupApp.Mall
-	MallGroup := Router.Group("api")
+	MallGroup := Router.Group("/api")
 	{
 		// 商城前端路由
+		MallGroup.OPTIONS("/*", func(c *gee.Context) {
+			c.FailWithStatus(http.StatusNoContent)
+		})
 		mallRouter.InitMallCarouselIndexRouter(MallGroup)
 		mallRouter.InitMallGoodsInfoIndexRouter(MallGroup)
 		mallRouter.InitMallGoodsCategoryIndexRouter(MallGroup)

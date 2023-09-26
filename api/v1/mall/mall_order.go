@@ -1,21 +1,22 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+	"strconv"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/response"
 	mallReq "main.go/model/mall/request"
 	"main.go/utils"
-	"strconv"
 )
 
 type MallOrderApi struct {
 }
 
-func (m *MallOrderApi) SaveOrder(c *gin.Context) {
+func (m *MallOrderApi) SaveOrder(c *gee.Context) {
 	var saveOrderParam mallReq.SaveOrderParam
-	_ = c.ShouldBindJSON(&saveOrderParam)
+	_ = c.BindJSON(&saveOrderParam)
 	if err := utils.Verify(saveOrderParam, utils.SaveOrderParamVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 	}
@@ -43,7 +44,7 @@ func (m *MallOrderApi) SaveOrder(c *gin.Context) {
 	}
 }
 
-func (m *MallOrderApi) PaySuccess(c *gin.Context) {
+func (m *MallOrderApi) PaySuccess(c *gee.Context) {
 	orderNo := c.Query("orderNo")
 	payType, _ := strconv.Atoi(c.Query("payType"))
 	if err := mallOrderService.PaySuccess(orderNo, payType); err != nil {
@@ -53,7 +54,7 @@ func (m *MallOrderApi) PaySuccess(c *gin.Context) {
 	response.OkWithMessage("订单支付成功", c)
 }
 
-func (m *MallOrderApi) FinishOrder(c *gin.Context) {
+func (m *MallOrderApi) FinishOrder(c *gee.Context) {
 	orderNo := c.Param("orderNo")
 	token := c.GetHeader("token")
 	if err := mallOrderService.FinishOrder(token, orderNo); err != nil {
@@ -64,7 +65,7 @@ func (m *MallOrderApi) FinishOrder(c *gin.Context) {
 
 }
 
-func (m *MallOrderApi) CancelOrder(c *gin.Context) {
+func (m *MallOrderApi) CancelOrder(c *gee.Context) {
 	orderNo := c.Param("orderNo")
 	token := c.GetHeader("token")
 	if err := mallOrderService.CancelOrder(token, orderNo); err != nil {
@@ -74,7 +75,7 @@ func (m *MallOrderApi) CancelOrder(c *gin.Context) {
 	response.OkWithMessage("订单签收成功", c)
 
 }
-func (m *MallOrderApi) OrderDetailPage(c *gin.Context) {
+func (m *MallOrderApi) OrderDetailPage(c *gee.Context) {
 	orderNo := c.Param("orderNo")
 	token := c.GetHeader("token")
 	if err, orderDetail := mallOrderService.GetOrderDetailByOrderNo(token, orderNo); err != nil {
@@ -85,7 +86,7 @@ func (m *MallOrderApi) OrderDetailPage(c *gin.Context) {
 	}
 }
 
-func (m *MallOrderApi) OrderList(c *gin.Context) {
+func (m *MallOrderApi) OrderList(c *gee.Context) {
 	token := c.GetHeader("token")
 	pageNumber, _ := strconv.Atoi(c.Query("pageNumber"))
 	status := c.Query("status")

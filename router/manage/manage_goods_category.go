@@ -1,7 +1,8 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	v1 "main.go/api/v1"
 	"main.go/middleware"
 )
@@ -9,8 +10,9 @@ import (
 type ManageGoodsCategoryRouter struct {
 }
 
-func (r *ManageGoodsCategoryRouter) InitManageGoodsCategoryRouter(Router *gin.RouterGroup) {
-	goodsCategoryRouter := Router.Group("v1").Use(middleware.AdminJWTAuth())
+func (r *ManageGoodsCategoryRouter) InitManageGoodsCategoryRouter(Router *gee.RouterGroup) {
+	goodsCategoryRouter := Router.Group("/v1")
+	goodsCategoryRouter.Use(middleware.AdminJWTAuth())
 
 	var goodsCategoryApi = v1.ApiGroupApp.ManageApiGroup.ManageGoodsCategoryApi
 	{

@@ -1,9 +1,9 @@
 package mall
 
 import (
+	"gee"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/response"
@@ -14,7 +14,7 @@ import (
 type MallShopCartApi struct {
 }
 
-func (m *MallShopCartApi) CartItemList(c *gin.Context) {
+func (m *MallShopCartApi) CartItemList(c *gee.Context) {
 	token := c.GetHeader("token")
 	if err, shopCartItem := mallShopCartService.GetMyShoppingCartItems(token); err != nil {
 		global.GVA_LOG.Error("获取购物车失败", zap.Error(err))
@@ -24,10 +24,10 @@ func (m *MallShopCartApi) CartItemList(c *gin.Context) {
 	}
 }
 
-func (m *MallShopCartApi) SaveMallShoppingCartItem(c *gin.Context) {
+func (m *MallShopCartApi) SaveMallShoppingCartItem(c *gee.Context) {
 	token := c.GetHeader("token")
 	var req mallReq.SaveCartItemParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	if err := mallShopCartService.SaveMallCartItem(token, req); err != nil {
 		global.GVA_LOG.Error("添加购物车失败", zap.Error(err))
 		response.FailWithMessage("添加购物车失败:"+err.Error(), c)
@@ -35,10 +35,10 @@ func (m *MallShopCartApi) SaveMallShoppingCartItem(c *gin.Context) {
 	response.OkWithMessage("添加购物车成功", c)
 }
 
-func (m *MallShopCartApi) UpdateMallShoppingCartItem(c *gin.Context) {
+func (m *MallShopCartApi) UpdateMallShoppingCartItem(c *gee.Context) {
 	token := c.GetHeader("token")
 	var req mallReq.UpdateCartItemParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	if err := mallShopCartService.UpdateMallCartItem(token, req); err != nil {
 		global.GVA_LOG.Error("修改购物车失败", zap.Error(err))
 		response.FailWithMessage("修改购物车失败:"+err.Error(), c)
@@ -46,7 +46,7 @@ func (m *MallShopCartApi) UpdateMallShoppingCartItem(c *gin.Context) {
 	response.OkWithMessage("修改购物车成功", c)
 }
 
-func (m *MallShopCartApi) DelMallShoppingCartItem(c *gin.Context) {
+func (m *MallShopCartApi) DelMallShoppingCartItem(c *gee.Context) {
 	token := c.GetHeader("token")
 	id, _ := strconv.Atoi(c.Param("newBeeMallShoppingCartItemId"))
 	if err := mallShopCartService.DeleteMallCartItem(token, id); err != nil {
@@ -57,7 +57,7 @@ func (m *MallShopCartApi) DelMallShoppingCartItem(c *gin.Context) {
 	}
 }
 
-func (m *MallShopCartApi) ToSettle(c *gin.Context) {
+func (m *MallShopCartApi) ToSettle(c *gee.Context) {
 	cartItemIdsStr := c.Query("cartItemIds")
 	token := c.GetHeader("token")
 	cartItemIds := utils.StrToInt(cartItemIdsStr)

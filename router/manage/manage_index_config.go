@@ -1,15 +1,16 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	v1 "main.go/api/v1"
 )
 
 type ManageIndexConfigRouter struct {
 }
 
-func (r *ManageIndexConfigRouter) InitManageIndexConfigRouter(Router *gin.RouterGroup) {
-	mallIndexConfigRouter := Router.Group("v1")
+func (r *ManageIndexConfigRouter) InitManageIndexConfigRouter(Router *gee.RouterGroup) {
+	mallIndexConfigRouter := Router.Group("/v1")
 	var mallIndexConfigApi = v1.ApiGroupApp.ManageApiGroup.ManageIndexConfigApi
 	{
 		mallIndexConfigRouter.POST("indexConfigs", mallIndexConfigApi.CreateIndexConfig)        // 新建MallIndexConfig

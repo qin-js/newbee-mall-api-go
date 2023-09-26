@@ -1,6 +1,6 @@
 module main.go
 
-go 1.17
+go 1.18
 
 require (
 	github.com/fsnotify/fsnotify v1.5.1
@@ -13,6 +13,12 @@ require (
 	go.uber.org/zap v1.21.0
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/gorm v1.23.3
+	gee v0.0.0
+)
+
+replace gee => ../7days-golang/gee-web/day7-panic-recover/gee
+
+require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
@@ -46,5 +52,4 @@ require (
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-
 )

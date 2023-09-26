@@ -4,12 +4,12 @@
 package core
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
 	"net/http"
 	"time"
 )
 
-func initServer(address string, router *gin.Engine) server {
+func initServer(address string, router *gee.Engine) server {
 	return &http.Server{
 		Addr:           address,
 		Handler:        router,

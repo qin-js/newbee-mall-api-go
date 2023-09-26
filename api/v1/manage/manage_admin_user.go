@@ -1,7 +1,9 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+	"strconv"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/request"
@@ -10,16 +12,15 @@ import (
 	"main.go/model/manage"
 	manageReq "main.go/model/manage/request"
 	"main.go/utils"
-	"strconv"
 )
 
 type ManageAdminUserApi struct {
 }
 
 // 创建AdminUser
-func (m *ManageAdminUserApi) CreateAdminUser(c *gin.Context) {
+func (m *ManageAdminUserApi) CreateAdminUser(c *gee.Context) {
 	var params manageReq.MallAdminParam
-	_ = c.ShouldBindJSON(&params)
+	_ = c.BindJSON(&params)
 	if err := utils.Verify(params, utils.AdminUserRegisterVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -38,9 +39,9 @@ func (m *ManageAdminUserApi) CreateAdminUser(c *gin.Context) {
 }
 
 // 修改密码
-func (m *ManageAdminUserApi) UpdateAdminUserPassword(c *gin.Context) {
+func (m *ManageAdminUserApi) UpdateAdminUserPassword(c *gee.Context) {
 	var req manageReq.MallUpdatePasswordParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	//mallAdminUserName := manage.MallAdminUser{
 	//	LoginPassword: utils.MD5V([]byte(req.LoginPassword)),
 	//}
@@ -55,9 +56,9 @@ func (m *ManageAdminUserApi) UpdateAdminUserPassword(c *gin.Context) {
 }
 
 // 更新用户名
-func (m *ManageAdminUserApi) UpdateAdminUserName(c *gin.Context) {
+func (m *ManageAdminUserApi) UpdateAdminUserName(c *gee.Context) {
 	var req manageReq.MallUpdateNameParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	userToken := c.GetHeader("token")
 	if err := mallAdminUserService.UpdateMallAdminName(userToken, req); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
@@ -68,7 +69,7 @@ func (m *ManageAdminUserApi) UpdateAdminUserName(c *gin.Context) {
 }
 
 // AdminUserProfile 用id查询AdminUser
-func (m *ManageAdminUserApi) AdminUserProfile(c *gin.Context) {
+func (m *ManageAdminUserApi) AdminUserProfile(c *gee.Context) {
 	adminToken := c.GetHeader("token")
 	if err, mallAdminUser := mallAdminUserService.GetMallAdminUser(adminToken); err != nil {
 		global.GVA_LOG.Error("未查询到记录", zap.Error(err))
@@ -80,9 +81,9 @@ func (m *ManageAdminUserApi) AdminUserProfile(c *gin.Context) {
 }
 
 // AdminLogin 管理员登陆
-func (m *ManageAdminUserApi) AdminLogin(c *gin.Context) {
+func (m *ManageAdminUserApi) AdminLogin(c *gee.Context) {
 	var adminLoginParams manageReq.MallAdminLoginParam
-	_ = c.ShouldBindJSON(&adminLoginParams)
+	_ = c.BindJSON(&adminLoginParams)
 	if err, _, adminToken := mallAdminUserService.AdminLogin(adminLoginParams); err != nil {
 		response.FailWithMessage("登陆失败", c)
 	} else {
@@ -91,7 +92,7 @@ func (m *ManageAdminUserApi) AdminLogin(c *gin.Context) {
 }
 
 // AdminLogout 登出
-func (m *ManageAdminUserApi) AdminLogout(c *gin.Context) {
+func (m *ManageAdminUserApi) AdminLogout(c *gee.Context) {
 	token := c.GetHeader("token")
 	if err := mallAdminUserTokenService.DeleteMallAdminUserToken(token); err != nil {
 		response.FailWithMessage("登出失败", c)
@@ -102,9 +103,9 @@ func (m *ManageAdminUserApi) AdminLogout(c *gin.Context) {
 }
 
 // UserList 商城注册用户列表
-func (m *ManageAdminUserApi) UserList(c *gin.Context) {
+func (m *ManageAdminUserApi) UserList(c *gee.Context) {
 	var pageInfo manageReq.MallUserSearch
-	_ = c.ShouldBindQuery(&pageInfo)
+	_ = c.BindQuery(&pageInfo)
 	if err, list, total := mallUserService.GetMallUserInfoList(pageInfo); err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
@@ -119,10 +120,10 @@ func (m *ManageAdminUserApi) UserList(c *gin.Context) {
 }
 
 // LockUser 用户禁用与解除禁用(0-未锁定 1-已锁定)
-func (m *ManageAdminUserApi) LockUser(c *gin.Context) {
+func (m *ManageAdminUserApi) LockUser(c *gee.Context) {
 	lockStatus, _ := strconv.Atoi(c.Param("lockStatus"))
 	var IDS request.IdsReq
-	_ = c.ShouldBindJSON(&IDS)
+	_ = c.BindJSON(&IDS)
 	if err := mallUserService.LockUser(IDS, lockStatus); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败", c)
@@ -133,10 +134,10 @@ func (m *ManageAdminUserApi) LockUser(c *gin.Context) {
 
 // UploadFile 上传单图
 // 此处上传图片的功能可用，但是原前端项目的图片链接为服务器地址，如需要显示图片，需要修改前端指向的图片链接
-func (m *ManageAdminUserApi) UploadFile(c *gin.Context) {
+func (m *ManageAdminUserApi) UploadFile(c *gee.Context) {
 	var file example.ExaFileUploadAndDownload
 	noSave := c.DefaultQuery("noSave", "0")
-	_, header, err := c.Request.FormFile("file")
+	_, header, err := c.Req.FormFile("file")
 	if err != nil {
 		global.GVA_LOG.Error("接收文件失败!", zap.Error(err))
 		response.FailWithMessage("接收文件失败", c)

@@ -1,7 +1,8 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	v1 "main.go/api/v1"
 	"main.go/middleware"
 )
@@ -9,8 +10,9 @@ import (
 type MallShopCartRouter struct {
 }
 
-func (m *MallUserRouter) InitMallShopCartRouter(Router *gin.RouterGroup) {
-	mallShopCartRouter := Router.Group("v1").Use(middleware.UserJWTAuth())
+func (m *MallUserRouter) InitMallShopCartRouter(Router *gee.RouterGroup) {
+	mallShopCartRouter := Router.Group("/v1")
+	mallShopCartRouter.Use(middleware.UserJWTAuth())
 	var mallShopCartApi = v1.ApiGroupApp.MallApiGroup.MallShopCartApi
 	{
 		mallShopCartRouter.GET("/shop-cart", mallShopCartApi.CartItemList)                                             //购物车列表(网页移动端不分页)

@@ -1,7 +1,9 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"gee"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/response"
@@ -12,9 +14,9 @@ import (
 type MallUserApi struct {
 }
 
-func (m *MallUserApi) UserRegister(c *gin.Context) {
+func (m *MallUserApi) UserRegister(c *gee.Context) {
 	var req mallReq.RegisterUserParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	if err := utils.Verify(req, utils.MallUserRegisterVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -26,7 +28,7 @@ func (m *MallUserApi) UserRegister(c *gin.Context) {
 	response.OkWithMessage("创建成功", c)
 }
 
-func (m *MallUserApi) UserInfoUpdate(c *gin.Context) {
+func (m *MallUserApi) UserInfoUpdate(c *gee.Context) {
 	var req mallReq.UpdateUserInfoParam
 	token := c.GetHeader("token")
 	if err := mallUserService.UpdateUserInfo(token, req); err != nil {
@@ -36,7 +38,7 @@ func (m *MallUserApi) UserInfoUpdate(c *gin.Context) {
 	response.OkWithMessage("更新成功", c)
 }
 
-func (m *MallUserApi) GetUserInfo(c *gin.Context) {
+func (m *MallUserApi) GetUserInfo(c *gee.Context) {
 	token := c.GetHeader("token")
 	if err, userDetail := mallUserService.GetUserDetail(token); err != nil {
 		global.GVA_LOG.Error("未查询到记录", zap.Error(err))
@@ -46,9 +48,9 @@ func (m *MallUserApi) GetUserInfo(c *gin.Context) {
 	}
 }
 
-func (m *MallUserApi) UserLogin(c *gin.Context) {
+func (m *MallUserApi) UserLogin(c *gee.Context) {
 	var req mallReq.UserLoginParam
-	_ = c.ShouldBindJSON(&req)
+	_ = c.BindJSON(&req)
 	if err, _, adminToken := mallUserService.UserLogin(req); err != nil {
 		response.FailWithMessage("登陆失败", c)
 	} else {
@@ -56,8 +58,10 @@ func (m *MallUserApi) UserLogin(c *gin.Context) {
 	}
 }
 
-func (m *MallUserApi) UserLogout(c *gin.Context) {
+func (m *MallUserApi) UserLogout(c *gee.Context) {
 	token := c.GetHeader("token")
+	fmt.Println("logout")
+	fmt.Println(c.Req.URL.Path)
 	if err := mallUserTokenService.DeleteMallUserToken(token); err != nil {
 		response.FailWithMessage("登出失败", c)
 	} else {

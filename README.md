@@ -46,6 +46,11 @@ go build -o server main.go (windows编译命令为go build -o server.exe main.go
 
 [后台管理项目](https://github.com/newbee-ltd/vue3-admin)
 
+```
+npm install --legacy-peer-deps   
+npm run dev/serve
+```
+
 测试用户名：admin  测试密码：123456
 
 

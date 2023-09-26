@@ -1,22 +1,23 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+	"strconv"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/request"
 	"main.go/model/common/response"
 	"main.go/model/manage"
 	manageReq "main.go/model/manage/request"
-	"strconv"
 )
 
 type ManageGoodsInfoApi struct {
 }
 
-func (m *ManageGoodsInfoApi) CreateGoodsInfo(c *gin.Context) {
+func (m *ManageGoodsInfoApi) CreateGoodsInfo(c *gee.Context) {
 	var mallGoodsInfo manageReq.GoodsInfoAddParam
-	_ = c.ShouldBindJSON(&mallGoodsInfo)
+	_ = c.BindJSON(&mallGoodsInfo)
 	if err := mallGoodsInfoService.CreateMallGoodsInfo(mallGoodsInfo); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败!"+err.Error(), c)
@@ -26,9 +27,9 @@ func (m *ManageGoodsInfoApi) CreateGoodsInfo(c *gin.Context) {
 }
 
 // DeleteMallGoodsInfo 删除MallGoodsInfo
-func (m *ManageGoodsInfoApi) DeleteGoodsInfo(c *gin.Context) {
+func (m *ManageGoodsInfoApi) DeleteGoodsInfo(c *gee.Context) {
 	var mallGoodsInfo manage.MallGoodsInfo
-	_ = c.ShouldBindJSON(&mallGoodsInfo)
+	_ = c.BindJSON(&mallGoodsInfo)
 	if err := mallGoodsInfoService.DeleteMallGoodsInfo(mallGoodsInfo); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败"+err.Error(), c)
@@ -38,9 +39,9 @@ func (m *ManageGoodsInfoApi) DeleteGoodsInfo(c *gin.Context) {
 }
 
 // ChangeMallGoodsInfoByIds 批量删除MallGoodsInfo
-func (m *ManageGoodsInfoApi) ChangeGoodsInfoByIds(c *gin.Context) {
+func (m *ManageGoodsInfoApi) ChangeGoodsInfoByIds(c *gee.Context) {
 	var IDS request.IdsReq
-	_ = c.ShouldBindJSON(&IDS)
+	_ = c.BindJSON(&IDS)
 	sellStatus := c.Param("status")
 	if err := mallGoodsInfoService.ChangeMallGoodsInfoByIds(IDS, sellStatus); err != nil {
 		global.GVA_LOG.Error("修改商品状态失败!", zap.Error(err))
@@ -51,9 +52,9 @@ func (m *ManageGoodsInfoApi) ChangeGoodsInfoByIds(c *gin.Context) {
 }
 
 // UpdateMallGoodsInfo 更新MallGoodsInfo
-func (m *ManageGoodsInfoApi) UpdateGoodsInfo(c *gin.Context) {
+func (m *ManageGoodsInfoApi) UpdateGoodsInfo(c *gee.Context) {
 	var mallGoodsInfo manageReq.GoodsInfoUpdateParam
-	_ = c.ShouldBindJSON(&mallGoodsInfo)
+	_ = c.BindJSON(&mallGoodsInfo)
 	if err := mallGoodsInfoService.UpdateMallGoodsInfo(mallGoodsInfo); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage("更新失败"+err.Error(), c)
@@ -63,7 +64,7 @@ func (m *ManageGoodsInfoApi) UpdateGoodsInfo(c *gin.Context) {
 }
 
 // FindMallGoodsInfo 用id查询MallGoodsInfo
-func (m *ManageGoodsInfoApi) FindGoodsInfo(c *gin.Context) {
+func (m *ManageGoodsInfoApi) FindGoodsInfo(c *gee.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err, goodsInfo := mallGoodsInfoService.GetMallGoodsInfo(id)
 	if err != nil {
@@ -86,9 +87,9 @@ func (m *ManageGoodsInfoApi) FindGoodsInfo(c *gin.Context) {
 }
 
 // GetMallGoodsInfoList 分页获取MallGoodsInfo列表
-func (m *ManageGoodsInfoApi) GetGoodsInfoList(c *gin.Context) {
+func (m *ManageGoodsInfoApi) GetGoodsInfoList(c *gee.Context) {
 	var pageInfo manageReq.MallGoodsInfoSearch
-	_ = c.ShouldBindQuery(&pageInfo)
+	_ = c.BindQuery(&pageInfo)
 	goodsName := c.Query("goodsName")
 	goodsSellStatus := c.Query("goodsSellStatus")
 	if err, list, total := mallGoodsInfoService.GetMallGoodsInfoInfoList(pageInfo, goodsName, goodsSellStatus); err != nil {

@@ -1,7 +1,8 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	v1 "main.go/api/v1"
 	"main.go/middleware"
 )
@@ -9,8 +10,9 @@ import (
 type MallOrderRouter struct {
 }
 
-func (m *MallOrderRouter) InitMallOrderRouter(Router *gin.RouterGroup) {
-	mallOrderRouter := Router.Group("v1").Use(middleware.UserJWTAuth())
+func (m *MallOrderRouter) InitMallOrderRouter(Router *gee.RouterGroup) {
+	mallOrderRouter := Router.Group("/v1")
+	mallOrderRouter.Use(middleware.UserJWTAuth())
 
 	var mallOrderRouterApi = v1.ApiGroupApp.MallApiGroup.MallOrderApi
 	{

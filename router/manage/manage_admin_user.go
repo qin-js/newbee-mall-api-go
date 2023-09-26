@@ -1,7 +1,8 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	v1 "main.go/api/v1"
 	"main.go/middleware"
 )
@@ -9,8 +10,9 @@ import (
 type ManageAdminUserRouter struct {
 }
 
-func (r *ManageAdminUserRouter) InitManageAdminUserRouter(Router *gin.RouterGroup) {
-	mallAdminUserRouter := Router.Group("v1").Use(middleware.AdminJWTAuth())
+func (r *ManageAdminUserRouter) InitManageAdminUserRouter(Router *gee.RouterGroup) {
+	mallAdminUserRouter := Router.Group("/v1")
+	mallAdminUserRouter.Use(middleware.AdminJWTAuth())
 	mallAdminUserWithoutRouter := Router.Group("v1")
 	var mallAdminUserApi = v1.ApiGroupApp.ManageApiGroup.ManageAdminUserApi
 	{

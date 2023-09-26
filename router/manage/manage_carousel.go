@@ -1,7 +1,8 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	v1 "main.go/api/v1"
 	"main.go/middleware"
 )
@@ -9,8 +10,9 @@ import (
 type ManageCarouselRouter struct {
 }
 
-func (r *ManageCarouselRouter) InitManageCarouselRouter(Router *gin.RouterGroup) {
-	mallCarouselRouter := Router.Group("v1").Use(middleware.AdminJWTAuth())
+func (r *ManageCarouselRouter) InitManageCarouselRouter(Router *gee.RouterGroup) {
+	mallCarouselRouter := Router.Group("/v1")
+	mallCarouselRouter.Use(middleware.AdminJWTAuth())
 	var mallCarouselApi = v1.ApiGroupApp.ManageApiGroup.ManageCarouselApi
 	{
 		mallCarouselRouter.POST("carousels", mallCarouselApi.CreateCarousel)   // 新建MallCarousel

@@ -1,18 +1,19 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+	"strconv"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/response"
-	"strconv"
 )
 
 type MallGoodsInfoApi struct {
 }
 
 // 商品搜索
-func (m *MallGoodsInfoApi) GoodsSearch(c *gin.Context) {
+func (m *MallGoodsInfoApi) GoodsSearch(c *gee.Context) {
 	pageNumber, _ := strconv.Atoi(c.Query("pageNumber"))
 	goodsCategoryId, _ := strconv.Atoi(c.Query("goodsCategoryId"))
 	keyword := c.Query("keyword")
@@ -30,7 +31,7 @@ func (m *MallGoodsInfoApi) GoodsSearch(c *gin.Context) {
 	}
 }
 
-func (m *MallGoodsInfoApi) GoodsDetail(c *gin.Context) {
+func (m *MallGoodsInfoApi) GoodsDetail(c *gee.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err, goodsInfo := mallGoodsInfoService.GetMallGoodsInfo(id)
 	if err != nil {

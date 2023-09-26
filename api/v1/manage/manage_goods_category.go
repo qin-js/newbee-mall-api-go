@@ -1,7 +1,9 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+	"strconv"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/enum"
@@ -9,16 +11,15 @@ import (
 	"main.go/model/common/response"
 	manageReq "main.go/model/manage/request"
 	manageRes "main.go/model/manage/response"
-	"strconv"
 )
 
 type ManageGoodsCategoryApi struct {
 }
 
 // CreateCategory 新建商品分类
-func (g *ManageGoodsCategoryApi) CreateCategory(c *gin.Context) {
+func (g *ManageGoodsCategoryApi) CreateCategory(c *gee.Context) {
 	var category manageReq.MallGoodsCategoryReq
-	_ = c.ShouldBindJSON(&category)
+	_ = c.BindJSON(&category)
 	if err := mallGoodsCategoryService.AddCategory(category); err != nil {
 		global.GVA_LOG.Error("创建失败", zap.Error(err))
 		response.FailWithMessage("创建失败:"+err.Error(), c)
@@ -28,9 +29,9 @@ func (g *ManageGoodsCategoryApi) CreateCategory(c *gin.Context) {
 }
 
 // UpdateCategory 修改商品分类信息
-func (g *ManageGoodsCategoryApi) UpdateCategory(c *gin.Context) {
+func (g *ManageGoodsCategoryApi) UpdateCategory(c *gee.Context) {
 	var category manageReq.MallGoodsCategoryReq
-	_ = c.ShouldBindJSON(&category)
+	_ = c.BindJSON(&category)
 	if err := mallGoodsCategoryService.UpdateCategory(category); err != nil {
 		global.GVA_LOG.Error("更新失败", zap.Error(err))
 		response.FailWithMessage("更新失败，存在相同分类", c)
@@ -40,9 +41,9 @@ func (g *ManageGoodsCategoryApi) UpdateCategory(c *gin.Context) {
 }
 
 // GetCategoryList 获取商品分类
-func (g *ManageGoodsCategoryApi) GetCategoryList(c *gin.Context) {
+func (g *ManageGoodsCategoryApi) GetCategoryList(c *gee.Context) {
 	var req manageReq.SearchCategoryParams
-	_ = c.ShouldBindQuery(&req)
+	_ = c.BindQuery(&req)
 	if err, list, total := mallGoodsCategoryService.SelectCategoryPage(req); err != nil {
 		global.GVA_LOG.Error("获取失败！", zap.Error(err))
 		response.FailWithMessage("获取失败:"+err.Error(), c)
@@ -58,7 +59,7 @@ func (g *ManageGoodsCategoryApi) GetCategoryList(c *gin.Context) {
 }
 
 // GetCategory 通过id获取分类数据
-func (g *ManageGoodsCategoryApi) GetCategory(c *gin.Context) {
+func (g *ManageGoodsCategoryApi) GetCategory(c *gee.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err, goodsCategory := mallGoodsCategoryService.SelectCategoryById(id)
 	if err != nil {
@@ -70,9 +71,9 @@ func (g *ManageGoodsCategoryApi) GetCategory(c *gin.Context) {
 }
 
 // DelCategory 设置分类失效
-func (g *ManageGoodsCategoryApi) DelCategory(c *gin.Context) {
+func (g *ManageGoodsCategoryApi) DelCategory(c *gee.Context) {
 	var ids request.IdsReq
-	_ = c.ShouldBindJSON(&ids)
+	_ = c.BindJSON(&ids)
 	if err, _ := mallGoodsCategoryService.DeleteGoodsCategoriesByIds(ids); err != nil {
 		global.GVA_LOG.Error("删除失败！", zap.Error(err))
 		response.FailWithMessage("删除失败"+err.Error(), c)
@@ -83,7 +84,7 @@ func (g *ManageGoodsCategoryApi) DelCategory(c *gin.Context) {
 }
 
 // ListForSelect 用于三级分类联动效果制作
-func (g *ManageGoodsCategoryApi) ListForSelect(c *gin.Context) {
+func (g *ManageGoodsCategoryApi) ListForSelect(c *gee.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	err, goodsCategory := mallGoodsCategoryService.SelectCategoryById(id)
 	if err != nil {

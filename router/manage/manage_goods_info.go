@@ -1,15 +1,16 @@
 package manage
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	v1 "main.go/api/v1"
 )
 
 type ManageGoodsInfoRouter struct {
 }
 
-func (m *ManageGoodsInfoRouter) InitManageGoodsInfoRouter(Router *gin.RouterGroup) {
-	mallGoodsInfoRouter := Router.Group("v1")
+func (m *ManageGoodsInfoRouter) InitManageGoodsInfoRouter(Router *gee.RouterGroup) {
+	mallGoodsInfoRouter := Router.Group("/v1")
 	var mallGoodsInfoApi = v1.ApiGroupApp.ManageApiGroup.ManageGoodsInfoApi
 	{
 		mallGoodsInfoRouter.POST("goods", mallGoodsInfoApi.CreateGoodsInfo)                    // 新建MallGoodsInfo

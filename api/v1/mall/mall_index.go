@@ -1,7 +1,9 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"gee"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/enum"
@@ -12,22 +14,26 @@ type MallIndexApi struct {
 }
 
 // MallIndexInfo 加载首页信息
-func (m *MallIndexApi) MallIndexInfo(c *gin.Context) {
+func (m *MallIndexApi) MallIndexInfo(c *gee.Context) {
+	fmt.Println("test1")
 	err, _, mallCarouseInfo := mallCarouselService.GetCarouselsForIndex(5)
 	if err != nil {
 		global.GVA_LOG.Error("轮播图获取失败"+err.Error(), zap.Error(err))
 		response.FailWithMessage("轮播图获取失败", c)
 	}
+	fmt.Println("test2")
 	err, hotGoodses := mallIndexConfigService.GetConfigGoodsForIndex(enum.IndexGoodsHot.Code(), 4)
 	if err != nil {
 		global.GVA_LOG.Error("热销商品获取失败"+err.Error(), zap.Error(err))
 		response.FailWithMessage("热销商品获取失败", c)
 	}
+	fmt.Println("test3")
 	err, newGoodses := mallIndexConfigService.GetConfigGoodsForIndex(enum.IndexGoodsNew.Code(), 5)
 	if err != nil {
 		global.GVA_LOG.Error("新品获取失败"+err.Error(), zap.Error(err))
 		response.FailWithMessage("新品获取失败", c)
 	}
+	fmt.Println("test4")
 	err, recommendGoodses := mallIndexConfigService.GetConfigGoodsForIndex(enum.IndexGoodsRecommond.Code(), 10)
 	if err != nil {
 		global.GVA_LOG.Error("推荐商品获取失败"+err.Error(), zap.Error(err))

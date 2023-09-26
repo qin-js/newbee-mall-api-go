@@ -2,6 +2,11 @@ package mall
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 	"main.go/global"
@@ -10,9 +15,6 @@ import (
 	mallReq "main.go/model/mall/request"
 	mallRes "main.go/model/mall/response"
 	"main.go/utils"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type MallUserService struct {
@@ -53,6 +55,7 @@ func (m *MallUserService) UpdateUserInfo(token string, req mallReq.UpdateUserInf
 
 func (m *MallUserService) GetUserDetail(token string) (err error, userDetail mallRes.MallUserDetailResponse) {
 	var userToken mall.MallUserToken
+	fmt.Println("** get user detail")
 	err = global.GVA_DB.Where("token =?", token).First(&userToken).Error
 	if err != nil {
 		return errors.New("不存在的用户"), userDetail
@@ -68,8 +71,10 @@ func (m *MallUserService) GetUserDetail(token string) (err error, userDetail mal
 
 func (m *MallUserService) UserLogin(params mallReq.UserLoginParam) (err error, user mall.MallUser, userToken mall.MallUserToken) {
 	err = global.GVA_DB.Where("login_name=? AND password_md5=?", params.LoginName, params.PasswordMd5).First(&user).Error
+	fmt.Println("userlogin")
 	if user != (mall.MallUser{}) {
 		token := getNewToken(time.Now().UnixNano()/1e6, int(user.UserId))
+		fmt.Println("new_token:", token)
 		global.GVA_DB.Where("user_id", user.UserId).First(&token)
 		nowDate := time.Now()
 		// 48小时过期
@@ -77,6 +82,7 @@ func (m *MallUserService) UserLogin(params mallReq.UserLoginParam) (err error, u
 		expireDate := nowDate.Add(expireTime)
 		// 没有token新增，有token 则更新
 		if userToken == (mall.MallUserToken{}) {
+			fmt.Println("update userid")
 			userToken.UserId = user.UserId
 			userToken.Token = token
 			userToken.UpdateTime = nowDate
@@ -85,6 +91,7 @@ func (m *MallUserService) UserLogin(params mallReq.UserLoginParam) (err error, u
 				return
 			}
 		} else {
+			fmt.Println("update user")
 			userToken.Token = token
 			userToken.UpdateTime = nowDate
 			userToken.ExpireTime = expireDate

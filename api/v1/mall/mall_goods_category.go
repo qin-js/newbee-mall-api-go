@@ -1,7 +1,8 @@
 package mall
 
 import (
-	"github.com/gin-gonic/gin"
+	"gee"
+
 	"go.uber.org/zap"
 	"main.go/global"
 	"main.go/model/common/response"
@@ -10,8 +11,8 @@ import (
 type MallGoodsCategoryApi struct {
 }
 
-//返回分类数据(首页调用)
-func (m *MallGoodsCategoryApi) GetGoodsCategory(c *gin.Context) {
+// 返回分类数据(首页调用)
+func (m *MallGoodsCategoryApi) GetGoodsCategory(c *gee.Context) {
 	err, list := mallGoodsCategoryService.GetCategoriesForIndex()
 	if err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Error(err))
